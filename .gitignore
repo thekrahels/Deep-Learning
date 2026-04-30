@@ -3,3 +3,20 @@ __pycache__/
 *.pyc
 .env
 .DS_Store
+
+# Visual Studio
+.vs/
+
+# VS Code (optional, fine to ignore)
+.vscode/
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+
+# OS junk
+.DS_Store
+Thumbs.db
+``

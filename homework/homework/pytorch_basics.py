@@ -82,7 +82,8 @@ class PyTorchBasics:
         """
         ##raise NotImplementedError
         ##return x.unique(sorted=True)
-        return x.sort().values
+        return x.unique().sort().values
+        ##return torch.arange(x)
 
     @staticmethod
     def make_it_pytorch_4(x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
@@ -107,7 +108,8 @@ class PyTorchBasics:
 
         Solution length: 27 characters
         """
-        raise NotImplementedError
+        #raise NotImplementedError
+        return (y > x.mean()).sum()
 
     @staticmethod
     def make_it_pytorch_5(x: torch.Tensor) -> torch.Tensor:
@@ -126,7 +128,8 @@ class PyTorchBasics:
 
         Solution length: 11 characters
         """
-        raise NotImplementedError
+        ##raise NotImplementedError
+        return x.premute(1,0)
 
     @staticmethod
     def make_it_pytorch_6(x: torch.Tensor) -> torch.Tensor:

@@ -80,7 +80,9 @@ class PyTorchBasics:
 
         Solution length: 22 characters
         """
-        raise NotImplementedError
+        ##raise NotImplementedError
+        ##return x.unique(sorted=True)
+        return x.sort(dim=-1)[0]
 
     @staticmethod
     def make_it_pytorch_4(x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:

@@ -129,7 +129,7 @@ class PyTorchBasics:
         Solution length: 11 characters
         """
         ##raise NotImplementedError
-        return x.premute(1,0)
+        return x.mT
 
     @staticmethod
     def make_it_pytorch_6(x: torch.Tensor) -> torch.Tensor:

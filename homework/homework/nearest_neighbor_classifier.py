@@ -34,11 +34,16 @@ class NearestNeighborClassifier:
             tuple of x and y both torch.Tensor's.
         """
         ##raise NotImplementedError
-        print("x is:")
-        print(x)
-        print("y is:")
-        print(y)
-        return torch.as_tensor(x), torch.as_tensor(y)
+        ##print("x is:")
+        ##print(x)
+        ##print("y is:")
+        ##print(y)
+        x_tensor = torch.as_tensor(x)
+        y_tensor = torch.as_tensor(y)
+        if x_tensor.ndim == 1:
+            x_tensor = x_tensor.unsqueeze(0)
+
+        return x_tensor, y_tensor
 
     @classmethod
     def compute_data_statistics(cls, x: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
@@ -54,7 +59,7 @@ class NearestNeighborClassifier:
             Both should have a shape [1, D]
         """
         ##raise NotImplementedError
-        return torch.mean(x, dim=0), torch.std(x, dim=0)
+        return torch.mean(x, dim=0, keepdim=True), torch.std(x, dim=0, keepdim=True)
 
 
     def input_normalization(self, x: torch.Tensor) -> torch.Tensor:
@@ -79,7 +84,7 @@ class NearestNeighborClassifier:
         Returns:
             tuple of the nearest neighbor data point [D] and its label [1]
         """
-        raise NotImplementedError
+        ##raise NotImplementedError
         x = self.input_normalization(x)
         idx = ...  # Implement me:
         return self.data[idx], self.label[idx]

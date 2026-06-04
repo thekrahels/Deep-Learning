@@ -191,7 +191,8 @@ class PyTorchBasics:
 
         Solution length: 22 characters
         """
-        raise NotImplementedError
+        ##raise NotImplementedError
+        return x.cumsum(dim=0)
 
     @staticmethod
     def make_it_pytorch_9(x: torch.Tensor) -> torch.Tensor:

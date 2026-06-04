@@ -82,7 +82,7 @@ class PyTorchBasics:
         """
         ##raise NotImplementedError
         ##return x.unique(sorted=True)
-        return x.sort(dim=-1)[0]
+        return x.sort().values
 
     @staticmethod
     def make_it_pytorch_4(x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:

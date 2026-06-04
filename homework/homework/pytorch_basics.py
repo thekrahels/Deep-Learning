@@ -241,7 +241,8 @@ class PyTorchBasics:
 
         Solution length: 49 characters
         """
-        raise NotImplementedError
+        ##raise NotImplementedError
+        return torch.where(x < c, torch.zeros_like(x), x)
 
     @staticmethod
     def make_it_pytorch_11(x: torch.Tensor, c: torch.Tensor) -> torch.Tensor:
@@ -265,7 +266,14 @@ class PyTorchBasics:
 
         Solution length: 30 characters
         """
-        raise NotImplementedError
+        ##raise NotImplementedError
+        ##return torch.nonzero(x < c,)
+        ##return torch.tensor(2, x < c)
+        print(x)
+        print(c)
+        print(x < c)
+        return (x < c).nonzero().T
+        ##return torch.where(x < c).mT
 
     @staticmethod
     def make_it_pytorch_12(x: torch.Tensor, m: torch.BoolTensor) -> torch.Tensor:

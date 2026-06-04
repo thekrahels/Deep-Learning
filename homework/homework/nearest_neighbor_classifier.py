@@ -86,7 +86,7 @@ class NearestNeighborClassifier:
         """
         ##raise NotImplementedError
         x = self.input_normalization(x)
-        idx = ...  # Implement me:
+        idx = torch.argmin(torch.norm(self.data_normalized - x, dim=1))
         return self.data[idx], self.label[idx]
 
     def get_k_nearest_neighbor(self, x: torch.Tensor, k: int) -> tuple[torch.Tensor, torch.Tensor]:

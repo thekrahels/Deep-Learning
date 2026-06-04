@@ -147,7 +147,8 @@ class PyTorchBasics:
 
         Solution length: 19 characters
         """
-        raise NotImplementedError
+        #raise NotImplementedError
+        return x.diagonal()
 
     @staticmethod
     def make_it_pytorch_7(x: torch.Tensor) -> torch.Tensor:
@@ -165,7 +166,12 @@ class PyTorchBasics:
 
         Solution length: 27 characters
         """
-        raise NotImplementedError
+        #raise NotImplementedError
+        ##return x.diagonal(offset=x.shape[1] - 1)
+        ##return x.diagonal(offset=-1)
+        ##return x.diagonal().permute()
+        ##return x.diagonal(offset=1)
+        return x.flip(1).diagonal()
 
     @staticmethod
     def make_it_pytorch_8(x: torch.Tensor) -> torch.Tensor:

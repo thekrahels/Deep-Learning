@@ -46,7 +46,9 @@ class WeatherForecast:
         Returns:
             tensor with size (num_days,)
         """
-        raise NotImplementedError
+        ##raise NotImplementedError
+        differences = torch.abs(self.data - torch.mean(self.data, dim=1, keepdim=True))
+        return self.data[torch.arange(self.data.shape[0]), torch.argmax(differences, dim=1)]
 
     def max_last_k_days(self, k: int) -> torch.Tensor:
         """

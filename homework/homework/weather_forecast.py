@@ -57,7 +57,9 @@ class WeatherForecast:
         Returns:
             tensor of size (k,)
         """
-        raise NotImplementedError
+        ##raise NotImplementedError
+        return torch.max(self.data[-k:], dim=1).values
+
 
     def predict_temperature(self, k: int) -> torch.Tensor:
         """
@@ -70,7 +72,9 @@ class WeatherForecast:
         Returns:
             tensor of a single value, the predicted temperature
         """
-        raise NotImplementedError
+        ##raise NotImplementedError
+        return torch.mean(torch.mean(self.data[-k:], dim=1))
+
 
     def what_day_is_this_from(self, t: torch.FloatTensor) -> torch.LongTensor:
         """
@@ -95,4 +99,7 @@ class WeatherForecast:
         Returns:
             tensor of a single value, the index of the closest data element
         """
-        raise NotImplementedError
+        ##raise NotImplementedError
+        return torch.argmin(torch.sum(torch.abs(self.data - t), dim=1))
+    
+

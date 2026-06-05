@@ -34,7 +34,10 @@ class WeatherForecast:
         Returns:
             tensor of a single value, the difference in temperature
         """
-        raise NotImplementedError
+        ##raise NotImplementedError
+        differences = torch.mean(self.data, dim=1)[1:] - torch.mean(self.data, dim=1)[:-1]
+        return torch.min(differences)
+    
 
     def find_the_most_extreme_day(self) -> torch.Tensor:
         """

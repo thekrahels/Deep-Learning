@@ -26,7 +26,7 @@ class ClassificationLoss(nn.Module):
             tensor, scalar loss
         """
         raise NotImplementedError("ClassificationLoss.forward() is not implemented")
-
+        return torch.nn.functional.cross_entropy(logits, target)
 
 class LinearClassifier(nn.Module):
     def __init__(

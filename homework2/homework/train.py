@@ -45,7 +45,7 @@ def train(
 
     # create loss function and optimizer
     loss_func = ClassificationLoss()
-    # optimizer = ...
+    optimizer = torch.optim.SGD(model.parameters(), lr=lr)
 
     global_step = 0
     metrics = {"train_acc": [], "val_acc": []}
@@ -61,9 +61,20 @@ def train(
         for img, label in train_data:
             img, label = img.to(device), label.to(device)
 
-            # TODO: implement training step
-            raise NotImplementedError("Training step not implemented")
+            ## TODO: implement training step
+            ##raise NotImplementedError("Training step not implemented")
+            optimizer.zero_grad()
+            logits = model(img)
+            loss = loss_func(logits, label)
+            loss.backward()
+            optimizer.step()
 
+            preds = logits.argmax(dim=1)
+            acc = (preds == label).float().mean().item()
+            metrics["train_acc"].append(acc)
+
+            logger.add_scalar("train_loss", loss.item(), global_step)
+            
             global_step += 1
 
         # disable gradient computation and switch to evaluation mode
@@ -75,6 +86,10 @@ def train(
 
                 # TODO: compute validation accuracy
                 raise NotImplementedError("Validation accuracy not implemented")
+                
+
+            metrics["train_acc"].append(train_acc)
+            metrics["val_acc"].append(val_acc)
 
         # log average train and val accuracy to tensorboard
         epoch_train_acc = torch.as_tensor(metrics["train_acc"]).mean()

@@ -29,28 +29,28 @@ def test_logging(logger: tb.SummaryWriter):
             dummy_train_loss = 0.9 ** (epoch + iteration / 20.0)
             dummy_train_accuracy = epoch / 10.0 + torch.randn(10)
 
-            # TODO: log train_loss
-            Logger.add_scalar("train_loss", dummy_train_loss, global_step)
-            # TODO: save additional metrics to be averaged
+            ## TODO: log train_loss
+            logger.add_scalar("train_loss", dummy_train_loss, global_step)
+            ## TODO: save additional metrics to be averaged
             metrics["train_acc"].append(dummy_train_accuracy.mean().item())
 
             global_step += 1
 
-        # TODO: log average train_accuracy
+        ## TODO: log average train_accuracy
         average_train_accuracy = sum(metrics["train_acc"]) / len(metrics["train_acc"])
-        Logger.add_scalar("train_accuracy", average_train_accuracy, global_step)
+        logger.add_scalar("train_accuracy", average_train_accuracy, global_step)
 
         # example validation loop
         torch.manual_seed(epoch)
         for _ in range(10):
             dummy_validation_accuracy = epoch / 10.0 + torch.randn(10)
 
-            # TODO: save additional metrics to be averaged
+            ## TODO: save additional metrics to be averaged
             metrics["val_acc"].append(dummy_validation_accuracy.mean().item())
 
-        # TODO: log average val_accuracy
+        ## TODO: log average val_accuracy
         average_val_accuracy = sum(metrics["val_acc"]) / len(metrics["val_acc"])
-        Logger.add_scalar("val_accuracy", average_val_accuracy, global_step)
+        logger.add_scalar("val_accuracy", average_val_accuracy, global_step)
 
 
 if __name__ == "__main__":

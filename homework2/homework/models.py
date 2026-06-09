@@ -79,9 +79,9 @@ class MLPClassifier(nn.Module):
         ##raise NotImplementedError("MLPClassifier.__init__() is not implemented")
         c = 3 * h * w
         self.network = nn.Sequential(
-            nn.Linear(c, 210),
+            nn.Linear(c, 128),
             nn.ReLU(),
-            nn.Linear(210, num_classes),
+            nn.Linear(128, num_classes),
         )
 
 

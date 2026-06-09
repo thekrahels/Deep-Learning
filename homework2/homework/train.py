@@ -13,8 +13,8 @@ from .utils import load_data
 def train(
     exp_dir: str = "logs",
     model_name: str = "linear",
-    num_epoch: int = 60,
-    lr: float = 1e-2,
+    num_epoch: int = 50,
+    lr: float = 1e-3,
     batch_size: int = 128,
     seed: int = 2024,
     **kwargs,

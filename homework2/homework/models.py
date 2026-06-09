@@ -119,8 +119,23 @@ class MLPClassifierDeep(nn.Module):
         """
         super().__init__()
 
-        raise NotImplementedError("MLPClassifierDeep.__init__() is not implemented")
-
+        ##raise NotImplementedError("MLPClassifierDeep.__init__() is not implemented")
+        layers = []
+        ##layers.append(torch.nn.Flatten())
+        
+        #after each layer, need to add a ReLU
+        c = 3 * h * w
+        for s in [h, w, h, w]:
+            layers.append(torch.nn.Linear(c, s))
+            #after each layer, need to add a ReLU
+            layers.append(torch.nn.ReLU())
+            c = s
+        
+        #add the last linear for the output [can't end on a ReLU to have a final model]
+        layers.append(torch.nn.Linear(c, num_classes))
+        
+        #sequential places the layers to put the outputs of one as the inputs of the next layer
+        self.network = torch.nn.Sequential(*layers)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -130,8 +145,8 @@ class MLPClassifierDeep(nn.Module):
         Returns:
             tensor (b, num_classes) logits
         """
-        raise NotImplementedError("MLPClassifierDeep.forward() is not implemented")
-
+        ##raise NotImplementedError("MLPClassifierDeep.forward() is not implemented")
+        return self.network(torch.flatten(x, start_dim=1))
 
 class MLPClassifierDeepResidual(nn.Module):
     def __init__(

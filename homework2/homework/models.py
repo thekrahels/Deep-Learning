@@ -167,7 +167,27 @@ class MLPClassifierDeepResidual(nn.Module):
         """
         super().__init__()
 
-        raise NotImplementedError("MLPClassifierDeepResidual.__init__() is not implemented")
+        ##raise NotImplementedError("MLPClassifierDeepResidual.__init__() is not implemented")
+        c = 3 * h * w
+        hidden_dim = 128
+
+        self.input_layer = torch.nn.Linear(c, hidden_dim)
+
+        self.model = torch.nn.Sequential(
+            torch.nn.Linear(hidden_dim, hidden_dim),
+            torch.nn.LayerNorm(hidden_dim),
+            torch.nn.ReLU(),
+            torch.nn.Linear(hidden_dim, hidden_dim),
+            torch.nn.LayerNorm(hidden_dim),
+            torch.nn.ReLU(),
+        )
+            #need to add a skip connection because the output is not the same as the input
+        ##if c != c: #should just be true the first time through to avoid 
+            ##self.skip = torch.nn.Linear(c, c)
+        ##else:
+            ##self.skip = torch.nn.Identity()
+
+        self.output_layer = torch.nn.Linear(hidden_dim, num_classes)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -177,8 +197,10 @@ class MLPClassifierDeepResidual(nn.Module):
         Returns:
             tensor (b, num_classes) logits
         """
-        raise NotImplementedError("MLPClassifierDeepResidual.forward() is not implemented")
-
+        ##raise NotImplementedError("MLPClassifierDeepResidual.forward() is not implemented")
+        #return self.skip(x) + self.model(x) 
+        x  = torch.relu(self.input_layer(x))
+        return self.output_layer(torch.relu(x + self.model(x)))
 
 model_factory = {
     "linear": LinearClassifier,

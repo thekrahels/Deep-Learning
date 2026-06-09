@@ -199,6 +199,7 @@ class MLPClassifierDeepResidual(nn.Module):
         """
         ##raise NotImplementedError("MLPClassifierDeepResidual.forward() is not implemented")
         #return self.skip(x) + self.model(x) 
+        x = torch.flatten(x, start_dim=1)
         x  = torch.relu(self.input_layer(x))
         return self.output_layer(torch.relu(x + self.model(x)))
 

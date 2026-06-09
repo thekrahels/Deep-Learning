@@ -125,7 +125,7 @@ class MLPClassifierDeep(nn.Module):
         
         #after each layer, need to add a ReLU
         c = 3 * h * w
-        for s in [h, w, h, w]:
+        for s in [h*2, w*2, h, w]:
             layers.append(torch.nn.Linear(c, s))
             #after each layer, need to add a ReLU
             layers.append(torch.nn.ReLU())

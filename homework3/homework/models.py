@@ -26,8 +26,33 @@ class Classifier(nn.Module):
         self.register_buffer("input_mean", torch.as_tensor(INPUT_MEAN))
         self.register_buffer("input_std", torch.as_tensor(INPUT_STD))
 
-        # TODO: implement
-        pass
+        ## TODO: implement
+        ##pass
+        
+
+        self.features = nn.Sequential(
+            # (B, 3, 64, 64) → (B, 32, 32, 32)
+            nn.Conv2d(in_channels, 32, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+
+            # → (B, 64, 16, 16)
+            nn.Conv2d(32, 64, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+
+            # → (B, 128, 8, 8)
+            nn.Conv2d(64, 128, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+
+            # → (B, 128, 1, 1)
+            nn.AdaptiveAvgPool2d((1, 1)),
+        )
+
+        # ✅ Final classifier
+        self.classifier = nn.Linear(128, num_classes)
+
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -40,8 +65,13 @@ class Classifier(nn.Module):
         # optional: normalizes the input
         z = (x - self.input_mean[None, :, None, None]) / self.input_std[None, :, None, None]
 
-        # TODO: replace with actual forward pass
-        logits = torch.randn(x.size(0), 6)
+        ## TODO: replace with actual forward pass
+        ##logits = torch.randn(x.size(0), 6)
+        
+        feats = self.features(z)
+        feats = feats.view(feats.size(0), -1)
+
+        logits = self.classifier(feats)
 
         return logits
 

@@ -108,8 +108,30 @@ class Detector(torch.nn.Module):
         self.register_buffer("input_mean", torch.as_tensor(INPUT_MEAN))
         self.register_buffer("input_std", torch.as_tensor(INPUT_STD))
 
-        # TODO: implement
-        pass
+        ## TODO: implement
+        ##pass
+
+        
+# ----- Encoder -----
+        self.enc1 = ConvBlock(in_channels, 16)
+        self.pool1 = nn.MaxPool2d(2)
+
+        self.enc2 = ConvBlock(16, 32)
+        self.pool2 = nn.MaxPool2d(2)
+
+        self.bottleneck = ConvBlock(32, 64)
+
+        # ----- Decoder -----
+        self.up1 = nn.ConvTranspose2d(64, 32, kernel_size=2, stride=2)
+        self.dec1 = ConvBlock(64, 32)  # skip connection
+
+        self.up2 = nn.ConvTranspose2d(32, 16, kernel_size=2, stride=2)
+        self.dec2 = ConvBlock(32, 16)
+
+        # ----- Heads -----
+        self.seg_head = nn.Conv2d(16, num_classes, kernel_size=1)
+        self.depth_head = nn.Conv2d(16, 1, kernel_size=1)
+
 
     def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
         """
@@ -127,9 +149,32 @@ class Detector(torch.nn.Module):
         # optional: normalizes the input
         z = (x - self.input_mean[None, :, None, None]) / self.input_std[None, :, None, None]
 
-        # TODO: replace with actual forward pass
-        logits = torch.randn(x.size(0), 3, x.size(2), x.size(3))
-        raw_depth = torch.rand(x.size(0), x.size(2), x.size(3))
+        ## TODO: replace with actual forward pass
+        ##logits = torch.randn(x.size(0), 3, x.size(2), x.size(3))
+        ##raw_depth = torch.rand(x.size(0), x.size(2), x.size(3))
+
+        
+# ----- Encoder -----
+        x1 = self.enc1(z)               # (B,16,H,W)
+        x2 = self.enc2(self.pool1(x1))  # (B,32,H/2,W/2)
+        x3 = self.bottleneck(self.pool2(x2))  # (B,64,H/4,W/4)
+
+        # ----- Decoder -----
+        u1 = self.up1(x3)               # (B,32,H/2,W/2)
+        u1 = torch.cat([u1, x2], dim=1)
+        u1 = self.dec1(u1)
+
+        u2 = self.up2(u1)               # (B,16,H,W)
+        u2 = torch.cat([u2, x1], dim=1)
+        u2 = self.dec2(u2)
+
+        # ----- Heads -----
+        logits = self.seg_head(u2)      # (B,3,H,W)
+
+        raw_depth = self.depth_head(u2)     # (B,1,H,W)
+        raw_depth = torch.sigmoid(depth)    # normalize to [0,1]
+        raw_depth = depth[:, 0]             # (B,H,W)
+
 
         return logits, raw_depth
 

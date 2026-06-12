@@ -8,6 +8,20 @@ INPUT_MEAN = [0.2788, 0.2657, 0.2629]
 INPUT_STD = [0.2064, 0.1944, 0.2252]
 
 
+class ConvBlock(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Conv2d(in_channels, out_channels, 3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(out_channels, out_channels, 3, padding=1),
+            nn.ReLU(),
+        )
+
+    def forward(self, x):
+        return self.net(x)
+
+
 class Classifier(nn.Module):
     def __init__(
         self,
@@ -171,12 +185,12 @@ class Detector(torch.nn.Module):
         # ----- Heads -----
         logits = self.seg_head(u2)      # (B,3,H,W)
 
-        raw_depth = self.depth_head(u2)     # (B,1,H,W)
-        raw_depth = torch.sigmoid(depth)    # normalize to [0,1]
-        raw_depth = depth[:, 0]             # (B,H,W)
+        depth = self.depth_head(u2)     # (B,1,H,W)
+        depth = torch.sigmoid(depth)    # normalize to [0,1]
+        depth = depth[:, 0]             # (B,H,W)
 
 
-        return logits, raw_depth
+        return logits, depth
 
     def predict(self, x: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
         """

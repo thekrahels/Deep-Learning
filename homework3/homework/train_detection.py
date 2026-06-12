@@ -9,7 +9,7 @@ import torch.utils.tensorboard as tb
 
 from homework.models import load_model, save_model
 from homework.metrics import DetectionMetric
-from homework.datasets.drive_dataset import load_data
+from homework.datasets.road_dataset import load_data
 
 
 def train(
@@ -74,7 +74,7 @@ def train(
         weight_decay=weight_decay,
     )
 
-    lambda_depth = 2.0
+    lambda_depth = 0.5
 
     global_step = 0
     best_score = -1.0
@@ -101,7 +101,8 @@ def train(
             seg_loss = seg_criterion(seg_logits, track)
             depth_loss = depth_criterion(pred_depth, depth)
 
-            loss = seg_loss + lambda_depth * depth_loss
+            ##loss = seg_loss + lambda_depth * depth_loss
+            loss = seg_loss + 0.5 * depth_loss
 
             loss.backward()
             optimizer.step()

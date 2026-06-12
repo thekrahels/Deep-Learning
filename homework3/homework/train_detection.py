@@ -78,7 +78,15 @@ def train(
         weight_decay=weight_decay,
     )
 
-    lambda_depth = 0.25
+    
+    scheduler = torch.optim.lr_scheduler.StepLR(
+        optimizer,
+        step_size=8,
+        gamma=0.5,
+    )
+
+
+    lambda_depth = 0.15
 
     global_step = 0
     best_score = -1.0
@@ -177,6 +185,7 @@ def train(
             torch.save(model.state_dict(), log_dir / f"{model_name}_best.th")
             print("Saved best model")
 
+        scheduler.step()
     logger.close()
     print("Best IoU:", best_score)
 

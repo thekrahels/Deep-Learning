@@ -132,24 +132,24 @@ class Detector(torch.nn.Module):
 
         
 # ----- Encoder -----
-        self.enc1 = ConvBlock(in_channels, 16)
+        self.enc1 = ConvBlock(in_channels, 32)
         self.pool1 = nn.MaxPool2d(2)
 
-        self.enc2 = ConvBlock(16, 32)
+        self.enc2 = ConvBlock(32, 64)
         self.pool2 = nn.MaxPool2d(2)
 
-        self.bottleneck = ConvBlock(32, 64)
+        self.bottleneck = ConvBlock(64, 128)
 
         # ----- Decoder -----
-        self.up1 = nn.ConvTranspose2d(64, 32, kernel_size=2, stride=2)
-        self.dec1 = ConvBlock(64, 32)  # skip connection
+        self.up1 = nn.ConvTranspose2d(128, 64, kernel_size=2, stride=2)
+        self.dec1 = ConvBlock(128, 64)  # skip connection
 
-        self.up2 = nn.ConvTranspose2d(32, 16, kernel_size=2, stride=2)
-        self.dec2 = ConvBlock(32, 16)
+        self.up2 = nn.ConvTranspose2d(64, 32, kernel_size=2, stride=2)
+        self.dec2 = ConvBlock(64, 32)
 
         # ----- Heads -----
-        self.seg_head = nn.Conv2d(16, num_classes, kernel_size=1)
-        self.depth_head = nn.Conv2d(16, 1, kernel_size=1)
+        self.seg_head = nn.Conv2d(32, num_classes, kernel_size=1)
+        self.depth_head = nn.Conv2d(32, 1, kernel_size=1)
 
 
     def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:

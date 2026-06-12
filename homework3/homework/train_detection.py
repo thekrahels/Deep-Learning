@@ -65,7 +65,11 @@ def train(
     # -------------------------
     # loss functions
     # -------------------------
-    seg_criterion = nn.CrossEntropyLoss()
+    
+    seg_criterion = nn.CrossEntropyLoss(
+        weight=torch.tensor([1.0, 5.0, 5.0], device=device)
+    )
+
     depth_criterion = nn.L1Loss()
 
     optimizer = torch.optim.Adam(
@@ -74,7 +78,7 @@ def train(
         weight_decay=weight_decay,
     )
 
-    lambda_depth = 0.5
+    lambda_depth = 0.25
 
     global_step = 0
     best_score = -1.0
@@ -101,8 +105,8 @@ def train(
             seg_loss = seg_criterion(seg_logits, track)
             depth_loss = depth_criterion(pred_depth, depth)
 
-            ##loss = seg_loss + lambda_depth * depth_loss
-            loss = seg_loss + 0.5 * depth_loss
+            loss = seg_loss + lambda_depth * depth_loss
+            ##loss = seg_loss + 0.5 * depth_loss
 
             loss.backward()
             optimizer.step()

@@ -8,18 +8,23 @@ INPUT_MEAN = [0.2788, 0.2657, 0.2629]
 INPUT_STD = [0.2064, 0.1944, 0.2252]
 
 
+
 class ConvBlock(nn.Module):
     def __init__(self, in_channels, out_channels):
         super().__init__()
         self.net = nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, 3, padding=1),
-            nn.ReLU(),
-            nn.Conv2d(out_channels, out_channels, 3, padding=1),
-            nn.ReLU(),
+            nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1, bias=False),
+            nn.BatchNorm2d(out_channels),
+            nn.ReLU(inplace=True),
+
+            nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1, bias=False),
+            nn.BatchNorm2d(out_channels),
+            nn.ReLU(inplace=True),
         )
 
     def forward(self, x):
         return self.net(x)
+
 
 
 class Classifier(nn.Module):

@@ -14,7 +14,7 @@ def attention_mask(seq_len, learned_embedding: torch.Tensor) -> torch.Tensor:
     return embed
 
 class TransformerLayer(torch.nn.Module):
-    def __init__(self, embed_dim, num_heads, res_pos_len=128) -> None:
+    def __init__(self, embed_dim, num_heads, res_pos_len=512) -> None:
         super().__init__()
 
         self.res_pos = torch.nn.Parameter(torch.zeros(num_heads, res_pos_len))
@@ -58,7 +58,7 @@ def train() -> None:
     net = Transformer(256, 8, 4)
     net.cuda()
     optim = torch.optim.Adam(net.parameters(), lr=.001)
-    for it in range(200):
+    for it in range(400):
         pred = net(tokens[None, :-1])[0]
         loss = torch.nn.functional.cross_entropy(pred, tokens[1:])
         
@@ -85,6 +85,8 @@ def sample():
         tokens = torch.as_tensor(data[-500:]).cuda()
         pred = net(tokens[None])[0, -1]
         next_char = pred.argmax(-1)
+        if next_char == 0:
+            break
         data.append(int(next_char))
         sys.stdout.write(chr(int(next_char)))
         sys.stdout.flush()
@@ -95,6 +97,6 @@ def sample():
 
 if __name__ == "__main__":
     train()
-    #sample()
+    sample()
     #learned_embed = torch.arange(6).float().view(2, 3)
     #print(attention_mask(5, learned_embed))

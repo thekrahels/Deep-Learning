@@ -14,12 +14,10 @@ def attention_mask(seq_len, learned_embedding: torch.Tensor) -> torch.Tensor:
     return embed
 
 class TransformerLayer(torch.nn.Module):
-    def __init__(self, embed_dim, num_heads):
+    def __init__(self, embed_dim, num_heads, res_pos_len=128) -> None:
         super().__init__()
 
-        
-
-
+        self.res_pos = torch.nn.Parameter(torch.zeros(num_heads, res_pos_len))
         self.self_att = torch.nn.MultiheadAttention(embed_dim, num_heads, batch_first=True)
         self.mlp = torch.nn.Sequential(
             torch.nn.Linear(embed_dim, 4 * embed_dim), 
@@ -31,7 +29,8 @@ class TransformerLayer(torch.nn.Module):
 
     def forward(self, x) -> Any:
         x_norm = self.in_norm(x)
-        x = x + self.self_att(x_norm, x_norm, x_norm)[0]
+        attn_mask = attention_mask(x.shape[1], self.res_pos)
+        x = x + self.self_att(x_norm, x_norm, x_norm, attn_mask=attn_mask)[0]
         x = x + self.mlp(self.mlp_norm(x))
         return x
 
@@ -71,6 +70,7 @@ def train() -> None:
             pred = net(tokens[None, :10])[0]
             print(tokens[1:11])
             print(pred.argmax(-1))
+            break
         #break
 
     #print(net(tokens[None, :10]))
@@ -80,6 +80,6 @@ def train() -> None:
 ##net(torch.rand(16, 10, 128)).shape
 
 if __name__ == "__main__":
-    #train()
-    learned_embed = torch.arange(6).float().view(2, 3)
-    print(attention_mask(5, learned_embed))
+    train()
+    #learned_embed = torch.arange(6).float().view(2, 3)
+    #print(attention_mask(5, learned_embed))

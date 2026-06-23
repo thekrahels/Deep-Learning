@@ -42,7 +42,18 @@ def train() -> None:
     tokens = torch.as_tensor([ord(c) for c in code])
     
     net = Transformer(128, 8, 0)
-    print(net(tokens[None, :10]))
+    optim = torch.optim.Adam(net.parameters(), lr=.001)
+    for it in range(100):
+        pred = net(tokens[None, :-1])[0]
+        loss = torch.nn.functional.cross_entropy(pred, tokens[1:])
+        
+        optim.zero_grad()
+        loss.backward()
+        optim.step()
+        print(float(loss))
+        break
+
+    #print(net(tokens[None, :10]))
     #print(code)
 
 ##net = Transformer(128, 8, 4)

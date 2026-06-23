@@ -55,7 +55,7 @@ def train() -> None:
 
     tokens = torch.as_tensor([127] +[ord(c) for c in code] + [0]).cuda()
     
-    net = Transformer(128, 8, 4)
+    net = Transformer(256, 8, 4)
     net.cuda()
     optim = torch.optim.Adam(net.parameters(), lr=.001)
     for it in range(200):
@@ -81,8 +81,8 @@ def sample():
     net.eval()
     net.cuda()
     data = [127]
-    for i in range(1000):
-        tokens = torch.as_tensor(data).cuda()
+    for i in range(10000):
+        tokens = torch.as_tensor(data[-500:]).cuda()
         pred = net(tokens[None])[0, -1]
         next_char = pred.argmax(-1)
         data.append(int(next_char))
@@ -94,7 +94,7 @@ def sample():
 ##net(torch.rand(16, 10, 128)).shape
 
 if __name__ == "__main__":
-    #train()
-    sample()
+    train()
+    #sample()
     #learned_embed = torch.arange(6).float().view(2, 3)
     #print(attention_mask(5, learned_embed))

@@ -1,4 +1,5 @@
 import torch
+from typing import Any
 
 class TransformerLayer(torch.nn.Module):
     def __init__(self, embed_dim, num_heads):
@@ -13,7 +14,7 @@ class TransformerLayer(torch.nn.Module):
         self.in_norm = torch.nn.LayerNorm(embed_dim)
         self.mlp_norm = torch.nn.LayerNorm(embed_dim)
 
-    def forward(self, x):
+    def forward(self, x) -> Any:
         x_norm = self.in_norm(x)
         x = x + self.self_att(x_norm, x_norm, x_norm)[0]
         x = x + self.mlp(self.mlp_norm(x))
@@ -21,9 +22,13 @@ class TransformerLayer(torch.nn.Module):
 
 
 class Transformer(torch.nn.Module):
-    def __init__(self, embed_dim, num_heads, num_layers):
+    def __init__(self, embed_dim, num_heads, num_layers) -> None:
         super().__init__()
-        self.network = torch.nn.Sequential(*[TransformerLayer(embed_dim, num_heads) for _ in range(num_layers)])
+        self.network = torch.nn.Sequential(
+            *[
+                TransformerLayer(embed_dim, num_heads) for _ in range(num_layers)
+            ]
+        )
 
     def forward(self, x) -> Any:
         return self.network(x)
@@ -31,6 +36,12 @@ class Transformer(torch.nn.Module):
 def train() -> None:
     with open(__file__) as f:
         code = f.read()
+
+    tokens = torch.as_tensor([ord(c) for c in code])
+    print(torch.unique(tokens))
+    #print(tokens)
+
+    #print(code)
 
 
 ##net = Transformer(128, 8, 4)

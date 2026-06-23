@@ -25,9 +25,11 @@ class Transformer(torch.nn.Module):
     def __init__(self, embed_dim, num_heads, num_layers) -> None:
         super().__init__()
         self.network = torch.nn.Sequential(
+            torch.nn.Embedding(128, embed_dim),
             *[
                 TransformerLayer(embed_dim, num_heads) for _ in range(num_layers)
-            ]
+            ],
+            torch.nn.Linear(embed_dim, 128)
         )
 
     def forward(self, x) -> Any:
@@ -38,11 +40,10 @@ def train() -> None:
         code = f.read()
 
     tokens = torch.as_tensor([ord(c) for c in code])
-    print(torch.unique(tokens))
-    #print(tokens)
-
+    
+    net = Transformer(128, 8, 0)
+    print(net(tokens[None, :10]))
     #print(code)
-
 
 ##net = Transformer(128, 8, 4)
 ##net(torch.rand(16, 10, 128)).shape

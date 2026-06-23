@@ -53,12 +53,12 @@ def train() -> None:
     with open(__file__) as f:
         code = f.read()
 
-    tokens = torch.as_tensor([ord(c) for c in code]).cuda()
+    tokens = torch.as_tensor([127] +[ord(c) for c in code] + [0]).cuda()
     
     net = Transformer(128, 8, 4)
     net.cuda()
     optim = torch.optim.Adam(net.parameters(), lr=.001)
-    for it in range(100):
+    for it in range(200):
         pred = net(tokens[None, :-1])[0]
         loss = torch.nn.functional.cross_entropy(pred, tokens[1:])
         
@@ -70,16 +70,31 @@ def train() -> None:
             pred = net(tokens[None, :10])[0]
             print(tokens[1:11])
             print(pred.argmax(-1))
-            break
-        #break
+    net.eval()
+    net.cpu()
+    torch.save(net, "transformer.pth")
 
-    #print(net(tokens[None, :10]))
-    #print(code)
+def sample():
+    import sys
+
+    net = torch.load("transformer.pth")
+    net.eval()
+    net.cuda()
+    data = [127]
+    for i in range(1000):
+        tokens = torch.as_tensor(data).cuda()
+        pred = net(tokens[None])[0, -1]
+        next_char = pred.argmax(-1)
+        data.append(int(next_char))
+        sys.stdout.write(chr(int(next_char)))
+        sys.stdout.flush()
+        
 
 ##net = Transformer(128, 8, 4)
 ##net(torch.rand(16, 10, 128)).shape
 
 if __name__ == "__main__":
-    train()
+    #train()
+    sample()
     #learned_embed = torch.arange(6).float().view(2, 3)
     #print(attention_mask(5, learned_embed))

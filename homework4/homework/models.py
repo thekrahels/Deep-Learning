@@ -24,6 +24,30 @@ class MLPPlanner(nn.Module):
         self.n_track = n_track
         self.n_waypoints = n_waypoints
 
+
+        input_dim = n_track * 2 * 2
+        output_dim = n_waypoints * 2
+
+        self.net = nn.Sequential(
+            nn.Linear(input_dim, 128),
+            nn.LayerNorm(128),
+            nn.ReLU(),
+
+            nn.Linear(128, 256),
+            nn.LayerNorm(256),
+            nn.ReLU(),
+
+            nn.Linear(256, 256),
+            nn.LayerNorm(256),
+            nn.ReLU(),
+
+            nn.Linear(256, 128),
+            nn.LayerNorm(128),
+            nn.ReLU(),
+
+            nn.Linear(128, output_dim),
+        )
+
     def forward(
         self,
         track_left: torch.Tensor,
@@ -43,7 +67,11 @@ class MLPPlanner(nn.Module):
         Returns:
             torch.Tensor: future waypoints with shape (b, n_waypoints, 2)
         """
-        raise NotImplementedError
+        ##raise NotImplementedError
+        x = torch.cat([track_left, track_right], dim=1)
+        x = x.flatten(start_dim=1)
+        x = self.net(x)
+        return x.view(-1, self.n_waypoints, 2)
 
 
 class TransformerPlanner(nn.Module):

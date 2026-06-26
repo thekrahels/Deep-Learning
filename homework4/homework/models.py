@@ -176,11 +176,32 @@ class TransformerPlanner(nn.Module):
 
 class CNNPlanner(torch.nn.Module):
     class Block(nn.Module):
+        
+        def __init__(self, in_channels: int, out_channels: int, stride: int):
+            super().__init__()
+
+            self.net = nn.Sequential(
+                nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=stride, padding=1),
+                nn.GroupNorm(8, out_channels),
+                nn.ReLU(),
+
+                nn.Conv2d(out_channels, out_channels, kernel_size=3, stride=1, padding=1),
+                nn.GroupNorm(8, out_channels),
+            )
+
+            if stride != 1 or in_channels != out_channels:
+                self.skip = nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=stride)
+            else:
+                self.skip = nn.Identity()
+
+            self.relu = nn.ReLU()
+
+        def forward(self, x):
+            return self.relu(self.net(x) + self.skip(x))
+
         def __init__(
             self,
-            in_channels: int, 
-            out_channels: int, 
-            stride: int
+            n_waypoints: int = 3,
         ):
             super().__init__()
 

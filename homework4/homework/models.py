@@ -199,38 +199,38 @@ class CNNPlanner(torch.nn.Module):
         def forward(self, x):
             return self.relu(self.net(x) + self.skip(x))
 
-        def __init__(
-            self,
-            n_waypoints: int = 3,
-        ):
-            super().__init__()
+    def __init__(
+        self,
+        n_waypoints: int = 3,
+    ):
+        super().__init__()
 
-            self.n_waypoints = n_waypoints
+        self.n_waypoints = n_waypoints
 
-            self.register_buffer("input_mean", torch.as_tensor(INPUT_MEAN), persistent=False)
-            self.register_buffer("input_std", torch.as_tensor(INPUT_STD), persistent=False)
+        self.register_buffer("input_mean", torch.as_tensor(INPUT_MEAN), persistent=False)
+        self.register_buffer("input_std", torch.as_tensor(INPUT_STD), persistent=False)
 
 
 
-            self.backbone = nn.Sequential(
-                nn.Conv2d(3, 32, kernel_size=7, stride=2, padding=3),
-                nn.GroupNorm(8, 32),
-                nn.ReLU(),
+        self.backbone = nn.Sequential(
+            nn.Conv2d(3, 32, kernel_size=7, stride=2, padding=3),
+            nn.GroupNorm(8, 32),
+            nn.ReLU(),
 
-                self.Block(32, 64, stride=2),
-                self.Block(64, 128, stride=2),
-                self.Block(128, 256, stride=2),
-                self.Block(256, 256, stride=1),
-            )
+            self.Block(32, 64, stride=2),
+            self.Block(64, 128, stride=2),
+            self.Block(128, 256, stride=2),
+            self.Block(256, 256, stride=1),
+        )
 
-            self.head = nn.Sequential(
-                nn.Flatten(),
-                nn.Linear(256, 128),
-                nn.ReLU(),
-                nn.Linear(128, n_waypoints * 2),
-            )
+        self.head = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(256, 128),
+            nn.ReLU(),
+            nn.Linear(128, n_waypoints * 2),
+        )
 
-            self.pool = nn.AdaptiveAvgPool2d((1, 1))
+        self.pool = nn.AdaptiveAvgPool2d((1, 1))
 
     def forward(self, image: torch.Tensor, **kwargs) -> torch.Tensor:
         """

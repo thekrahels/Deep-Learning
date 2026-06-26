@@ -85,8 +85,41 @@ class TransformerPlanner(nn.Module):
 
         self.n_track = n_track
         self.n_waypoints = n_waypoints
+        
+        self.d_model = d_model
+
+        self.input_proj = nn.Linear(2, d_model)
+
+        self.side_embed = nn.Embedding(2, d_model)
+
+        self.pos_embed = nn.Embedding(n_track * 2, d_model)
 
         self.query_embed = nn.Embedding(n_waypoints, d_model)
+
+
+
+        decoder_layer = nn.TransformerDecoderLayer(
+            d_model=d_model,
+            nhead=4,
+            dim_feedforward=256,
+            dropout=0.1,
+            batch_first=True,
+            activation="gelu",
+        )
+
+        
+        self.decoder = nn.TransformerDecoder(
+            decoder_layer,
+            num_layers=3,
+        )
+
+        self.output_head = nn.Sequential(
+            nn.LayerNorm(d_model),
+            nn.Linear(d_model, 64),
+            nn.ReLU(),
+            nn.Linear(64, 2),
+        )
+
 
     def forward(
         self,
